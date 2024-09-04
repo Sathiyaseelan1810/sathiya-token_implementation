@@ -1,0 +1,36 @@
+# Application Name
+spring:
+  application:
+    name: tokenValidation
+
+#  security:
+#    user:
+#      name: Sathiya
+#      password: Seelan@123
+
+  # db connection details
+  datasource:
+    url: jdbc:mysql://localhost:3306/token_validations?createDatabaseIfNotExist=true
+    username: root
+    password: Sathiya@1987
+
+  # it will show the sql as visible in the port
+  # Everytime the table will create when the application starts..
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+
+    # ----------------------- connection to use H2 db -------------------------:
+    # spring:
+    #  datasource:
+    #   url: jdbc:h2:mem:users
+    #    username: sa
+    #  h2:
+    #    console:
+    #      enable: true
+    #      settings:
+    #        web-allow-others: true
+
