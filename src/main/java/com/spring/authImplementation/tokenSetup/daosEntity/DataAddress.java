@@ -1,23 +1,23 @@
 package com.spring.authImplementation.tokenSetup.daosEntity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "addresses")
-@Data
+@Table(name = "user_address")
+@Getter
+@Setter
 
 public class DataAddress {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "address_id", nullable = false)
-    private Integer address_id;
+    private int address_id;
 
     @Column(name="street", nullable = false, unique = false, columnDefinition = "VARCHAR(50)")
     private String street;

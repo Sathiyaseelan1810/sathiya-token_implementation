@@ -1,0 +1,11 @@
+For Authorization and Authentication from Spring Security onwards below are the implementation in each package..
+
+config::
+    @Bean - These are the classes and needs to be instantiated thru Bean.
+    public UserDetailsService -> this is for adding the username, password and their roles..
+    public PasswordEncoder -> this bean method is to encrypt the password
+    public SecurityFilterChain -> This Bean method is for providing the api end point which/w not to be authenticated.
+
+
+
+

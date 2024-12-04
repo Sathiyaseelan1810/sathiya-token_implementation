@@ -1,4 +1,4 @@
-package com.spring.authImplementation.tokenSetup.service.impl;
+package com.spring.authImplementation.tokenSetup.enums;
 
 import lombok.Getter;
 

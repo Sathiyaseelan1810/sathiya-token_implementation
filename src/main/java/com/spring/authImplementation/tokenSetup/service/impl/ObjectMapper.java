@@ -14,18 +14,29 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ObjectMapper {
 
+    /**
+     *
+     * @param dataTransObjects
+     * @return
+     */
     // DTO(UI) to DAO(entity)--> POST
     public DataAccessObjects dataTransferToAccessObjMapper(DataTransObjects dataTransObjects){
         log.info("Started mapping all the DTO -> DAO objects");
-        return DataAccessObjects.builder()
+        DataAccessObjects dataAccessObjects = DataAccessObjects.builder()
                 .firstName(dataTransObjects.getFirstName())
                 .lastName(dataTransObjects.getLastName())
                 .emailID(dataTransObjects.getEmailID())
                 .mobileNumber(dataTransObjects.getMobileNumber())
                 .addresses(getDataAccessAddressObjectsList(dataTransObjects.getAddresses()))
                 .build();
+        return dataAccessObjects;
     }
 
+    /**
+     *
+     * @param dataTransAddressObjects
+     * @return
+     */
     private DataAddress dataAccessAddressObjects(Addresses dataTransAddressObjects) {
         log.info("Started mapping all the DTO Address Objects -> DAO Address Objects");
         return DataAddress.builder()
@@ -38,11 +49,23 @@ public class ObjectMapper {
                 .build();
     }
 
+    /**
+     *
+     * @param dataTransAddressObjectsList
+     * @return
+     */
     private List<DataAddress> getDataAccessAddressObjectsList(List<Addresses> dataTransAddressObjectsList) {
-        return dataTransAddressObjectsList.stream()
-                .map(this::dataAccessAddressObjects).collect(Collectors.toList());
+        return dataTransAddressObjectsList
+                .stream()
+                .map(this::dataAccessAddressObjects)
+                .collect(Collectors.toList());
     }
 
+    /**
+     *
+     * @param dataTransObjects
+     * @return
+     */
     // DTO(UI) to DAO(entity)--> PUT
     public DataAccessObjects dataTransferToAccessObjectMapperAll(DataTransObjects dataTransObjects){
         log.info("Started mapping all the DTO -> DAO objects");
@@ -85,8 +108,10 @@ public class ObjectMapper {
     }
 
     private List<Addresses> getDataTransAddressObjectsList(List<DataAddress> dataAccessAddressObjectsList) {
-        return dataAccessAddressObjectsList.stream()
-                .map(this::dataTransAddressObjects).collect(Collectors.toList());
+        return dataAccessAddressObjectsList
+                .stream()
+                .map(this::dataTransAddressObjects)
+                .collect(Collectors.toList());
     }
 
 

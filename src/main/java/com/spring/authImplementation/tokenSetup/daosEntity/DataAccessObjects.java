@@ -13,14 +13,14 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "token_validation")
+@Table(name = "user_details")
 
 public class DataAccessObjects {
 
     @Id
-    @Column(name="user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer userID;
+    @Column(name="user_id", nullable = false)
+    private int userID;
 
     @Column(name="first_name", nullable = false)
     private String firstName;
@@ -35,7 +35,7 @@ public class DataAccessObjects {
     private String emailID;
 
     @OneToMany(targetEntity = DataAddress.class, fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
-    @JoinColumn(name = "tkn_add", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "address_fn_ky", referencedColumnName = "user_id", nullable = false)
     private List<DataAddress> addresses;
 
 

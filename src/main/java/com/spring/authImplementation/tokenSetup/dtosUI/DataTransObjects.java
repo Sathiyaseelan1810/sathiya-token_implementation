@@ -30,7 +30,7 @@ public class DataTransObjects {
     @NotBlank(message = "'Email ID' should not be blank")
     private String emailID;
 
-    @NotNull()
+    @NotNull(message = "'Address' should not be blank")
     private List<Addresses> addresses;
 
 }

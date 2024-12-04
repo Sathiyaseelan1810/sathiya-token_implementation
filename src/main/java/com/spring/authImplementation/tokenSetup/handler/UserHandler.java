@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice
-public class UserJwtHandler {
+public class UserHandler {
 
     //@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     @ExceptionHandler(value = RuntimeException.class)
@@ -41,7 +41,7 @@ public class UserJwtHandler {
         UserResponseMessage userRegistrationResponseMessage = UserResponseMessage
                 .builder()
                 .developerMessage("ATTN: "+authenticationException.getMessage())
-                .errorMessage("uhihiu")
+                .errorMessage("Sorry! No such user is available in the Inventory!")
                 .build();
         return new ResponseEntity<>(userRegistrationResponseMessage, HttpStatus.OK);
     }

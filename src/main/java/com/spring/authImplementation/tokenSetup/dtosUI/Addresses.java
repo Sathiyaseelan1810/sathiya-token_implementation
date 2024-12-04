@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 
 public class Addresses {
-    @NotBlank(message = "'Address_ID' should not be blank")
+
     private Integer address_id;
 
     @NotBlank(message = "'Street' should not be blank")

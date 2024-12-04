@@ -2,12 +2,13 @@ package com.spring.authImplementation.tokenSetup.service.impl;
 
 import com.github.javafaker.Faker;
 import com.spring.authImplementation.tokenSetup.daosEntity.DataAccessObjects;
+import com.spring.authImplementation.tokenSetup.daosEntity.UserInfo;
 import com.spring.authImplementation.tokenSetup.dtosUI.Addresses;
 import com.spring.authImplementation.tokenSetup.dtosUI.DataTransObjects;
 import com.spring.authImplementation.tokenSetup.exception.SqlException;
 import com.spring.authImplementation.tokenSetup.exception.UserException;
-import com.spring.authImplementation.tokenSetup.handler.UserJwtHandler;
-import com.spring.authImplementation.tokenSetup.repository.UserAddressRepository;
+import com.spring.authImplementation.tokenSetup.handler.UserHandler;
+import com.spring.authImplementation.tokenSetup.repository.UserInfoRepository;
 import com.spring.authImplementation.tokenSetup.repository.UserTokenRepository;
 import com.spring.authImplementation.tokenSetup.service.UserServiceAbst;
 import jakarta.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.spring.authImplementation.tokenSetup.service.impl.CountryCode.USA;
+import static com.spring.authImplementation.tokenSetup.enums.CountryCode.USA;
 
 @Service
 @Slf4j
@@ -37,19 +39,19 @@ public class UserServiceImpl extends ObjectMapper implements UserServiceAbst {
     private UserTokenRepository userTokenRepository;
 
     @Autowired
-    private UserAddressRepository userAddressRepository;
+    private UserInfoRepository userInfoRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private UserJwtHandler userJwtHandler;
+    private PasswordEncoder passwordEncoder;
 
     private Faker faker= new Faker(new Locale("en-US"));
 
     @PostConstruct
     public void initUsers(){
-        List<DataAccessObjects> dataAccessObjectsList = IntStream.range(1,200)
+        List<DataAccessObjects> dataAccessObjectsList = IntStream.range(1,6)
                 .mapToObj(iterate-> objectMapper
                 .dataTransferToAccessObjectMapperAll(new DataTransObjects(iterate,faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().cellPhone(), faker.internet().emailAddress(),
                         List.of(new Addresses(iterate, faker.address().streetAddress(), faker.address().city(), faker.address().state(), faker.address().zipCode(), USA.getCode())))))
@@ -75,12 +77,12 @@ public class UserServiceImpl extends ObjectMapper implements UserServiceAbst {
     }
 
     @Override
-    public DataTransObjects getSelectiveUser(Integer id) throws Exception {
-        Optional<DataAccessObjects> findUserByID= this.userTokenRepository.findById(id);
-        if(!findUserByID.isEmpty())
-            throw new UserException("User ID: " + id+ " is not found in the db!");
+    public DataTransObjects getSelectiveUser(int user_id) throws Exception {
+        Optional<DataAccessObjects> findUserByID= this.userTokenRepository.findById(user_id);
+        if(findUserByID.isEmpty())
+            throw new UserException("UserID: " + user_id+ " is not found in the db!");
         DataAccessObjects dataAccessObjects = findUserByID.get();
-        log.info("Successfully found the 'User_ID='{} in the db", id);
+        log.info("Successfully found the 'User_ID='{} in the db", user_id);
         return objectMapper.dataAccessToTransferObjMapper(dataAccessObjects);
     }
 
@@ -109,7 +111,7 @@ public class UserServiceImpl extends ObjectMapper implements UserServiceAbst {
 
     // Pagination Mechanism::
     @Override
-    public List<DataTransObjects> getAllUsersWithPagination(Integer offSet, Integer pageSize) throws SqlException {
+    public List<DataTransObjects> getAllUsersWithPagination(int offSet, int pageSize) throws SqlException {
         if(this.userTokenRepository.findAll().isEmpty())
             throw new SqlException("Sorry No Users found in DB!");
         log.info("All users are retrieved from the repository successfully!");
@@ -120,7 +122,7 @@ public class UserServiceImpl extends ObjectMapper implements UserServiceAbst {
     }
     // Sorting with pagination::
     @Override
-    public List<DataTransObjects> getAllUsersWithPaginationAndSort(String fieldName, Integer offSet, Integer pageSize) throws SqlException {
+    public List<DataTransObjects> getAllUsersWithPaginationAndSort(String fieldName, int offSet, int pageSize) throws SqlException {
         if(this.userTokenRepository.findAll().isEmpty())
             throw new SqlException("Sorry No Users found in DB!");
         log.info("All users are retrieved from the repository successfully!");
@@ -138,9 +140,19 @@ public class UserServiceImpl extends ObjectMapper implements UserServiceAbst {
     }
 
     @Override
-    public void deleteUser(Integer id) {
-        this.userTokenRepository.deleteById(id);
-        log.info("UserID = {}  is deleted from the repository successfully!", id);
+    public void deleteUser(int user_id) throws UserException {
+        Optional<DataAccessObjects> findUserByID= this.userTokenRepository.findById(user_id);
+        if(findUserByID.isEmpty())
+            throw new UserException("UserID: " + user_id+ " is not found in the db!");
+        this.userTokenRepository.deleteById(user_id);
+        log.info("UserID = {}  is deleted from the repository successfully!", user_id);
+    }
+
+    public String addUser(UserInfo userInfo) {
+        // Encode password before saving the user
+        userInfo.setPassword(this.passwordEncoder.encode(userInfo.getPassword()));
+        this.userInfoRepository.save(userInfo);
+        return "User Added Successfully";
     }
 
 }
